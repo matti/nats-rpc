@@ -13,7 +13,7 @@ module NATS
           obj.to_json
         end
 
-        msg = @nats.request 'testing', obj_json, opts
+        msg = @nats.request subscription, obj_json, opts
         data = JSON.parse(msg["data"])
         payload = JSON.parse(data["payload"])
 
