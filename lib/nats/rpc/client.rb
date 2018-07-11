@@ -1,9 +1,13 @@
 module NATS
   module RPC
     class Client
-      def initialize(servers: ["nats://127.0.0.1:4222"])
+      def initialize(cluster_opts=nil)
+        cluster_opts = {
+          servers: ["nats://127.0.0.1:4222"]
+        } unless cluster_opts
+
         @nats = NATS::IO::Client.new
-        @nats.connect servers: servers
+        @nats.connect cluster_opts
       end
 
       def request(subscription, obj, opts)
