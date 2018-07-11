@@ -81,7 +81,7 @@ module NATS
         last_count_messages = 0
         loop do
           throughput = (last_count_messages - @count_messages).abs
-          debug "messages: #{@count_messages} throughput: #{throughput}/s errors json_parse: #{@count_json_parse_errors} block_call: #{@count_block_call_errors} to_json: #{@count_to_json_errors}"
+          debug "s: #{subscribe_to} q: #{opts[:queue]} - msg: #{@count_messages} tput: #{throughput}/s errs json_parse: #{@count_json_parse_errors} block_call: #{@count_block_call_errors} to_json: #{@count_to_json_errors}"
           last_count_messages = @count_messages
           sleep 1
         end
