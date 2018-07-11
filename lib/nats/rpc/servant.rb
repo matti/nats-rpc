@@ -93,7 +93,7 @@ module NATS
         {
           status: "error",
           code: code,
-          payload: data,
+          payload: data.to_json,
           servant: @id
         }.to_json
       end
