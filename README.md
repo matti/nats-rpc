@@ -11,7 +11,7 @@ servant.rb
 require "nats-rpc"
 
 servant = NATS::RPC::Servant.new
-servant.serve! 'testing' do |params, subject|
+servant.serve! 'testing', queue: 'test' do |params, subject|
   puts "got params: #{params.inspect} in subject: #{subject}"
 
   params["reverse"].reverse
@@ -21,7 +21,8 @@ end
 client.rb
 ```ruby
 client = NATS::RPC::Client.new
-data, payload = client.request 'testing', {reverse: "hello"}, timeout: 1
+msg = {reverse: "hello"}
+data, payload = client.request 'testing', msg, timeout: 1, queue: 'test'
 
 puts data
 # => {"status"=>"ok", "payload"=>"\"olleh\"", "took"=>0.0, "servant"=>"112a1f87-2d01-4339-a30d-ddc542ccd383"}
