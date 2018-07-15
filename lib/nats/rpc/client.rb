@@ -17,6 +17,14 @@ module NATS
         data = JSON.parse(msg["data"])
         payload = JSON.parse(data["payload"])
 
+        if data["status"] == "error"
+          case data["code"]
+          when 2.0
+            raise RemoteError, payload
+          else
+            raise "Error code: #{data["code"]}"
+          end
+        end
         [data, payload]
       end
     end

@@ -3,16 +3,36 @@ RSpec.describe NATS::RPC do
     expect(NATS::RPC::VERSION).not_to be nil
   end
 
-  it do
-    ENV['NATS_RPC_SERVER_URLS'] = "nats://127.0.0.1:12345"
-    ENV['NATS_RPC_RECONNECT'] = "false"
+  describe "envs" do
+    it 'uses NATS_RPC_SERVER_URLS and NATS_RPC_RECONNECT', slow:true do
+      envs = {
+        'NATS_RPC_SERVER_URLS' => 'nats://127.0.0.1:12345',
+        'NATS_RPC_RECONNECT' => 'false'
+      }
 
-    expect {
+      wrap_env envs do
+        expect {
+          NATS::RPC::Client.new
+        }.to raise_error Errno::ECONNREFUSED
+
+        expect {
+          NATS::RPC::Servant.new
+        }.to raise_error Errno::ECONNREFUSED
+      end
+    end
+  end
+
+  describe "errors" do
+    it do
+      servant = NATS::RPC::Servant.new
+      servant.serve "test" do |params|
+        asdf
+      end
       client = NATS::RPC::Client.new
-    }.to raise_error Errno::ECONNREFUSED
 
-    expect {
-      client = NATS::RPC::Servant.new
-    }.to raise_error Errno::ECONNREFUSED
+      expect {
+        client.request "test", {}, {}
+      }.to raise_error NATS::RPC::RemoteError, /undefined local variable or method `asdf'/
+    end
   end
 end

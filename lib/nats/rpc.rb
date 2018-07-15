@@ -5,6 +5,7 @@ require 'json'
 require_relative "rpc/version"
 require_relative "rpc/servant"
 require_relative "rpc/client"
+require_relative "rpc/errors"
 
 module NATS
   module RPC
