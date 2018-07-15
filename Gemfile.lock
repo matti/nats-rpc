@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nats-rpc (0.0.5)
+    nats-rpc (0.0.7)
       nats-pure
 
 GEM

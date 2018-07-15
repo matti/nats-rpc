@@ -10,5 +10,9 @@ RSpec.describe NATS::RPC do
     expect {
       client = NATS::RPC::Client.new
     }.to raise_error Errno::ECONNREFUSED
+
+    expect {
+      client = NATS::RPC::Servant.new
+    }.to raise_error Errno::ECONNREFUSED
   end
 end

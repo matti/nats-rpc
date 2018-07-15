@@ -5,7 +5,12 @@ module NATS
         @id = id
 
         @nats = NATS::IO::Client.new
-        @nats.connect cluster_opts || NATS::RPC.cluster_opts
+
+        @nats.connect(if cluster_opts.keys.size > 0
+          cluster_opts
+        else
+          NATS::RPC.cluster_opts
+        end)
 
         @count_json_parse_errors = 0
         @count_block_call_errors = 0

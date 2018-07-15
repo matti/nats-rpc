@@ -24,7 +24,6 @@ module NATS
         opts[:reconnect] = ENV['NATS_RPC_RECONNECT'] == "true"
       end
 
-      p opts
       opts
     end
   end
