@@ -4,12 +4,8 @@ module NATS
       def initialize(id: SecureRandom.uuid, **cluster_opts)
         @id = id
 
-        cluster_opts = {
-          servers: ["nats://127.0.0.1:4222"]
-        } unless cluster_opts
-
         @nats = NATS::IO::Client.new
-        @nats.connect cluster_opts
+        @nats.connect cluster_opts || NATS::RPC.cluster_opts
 
         @count_json_parse_errors = 0
         @count_block_call_errors = 0
