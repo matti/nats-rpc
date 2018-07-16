@@ -55,7 +55,14 @@ module NATS
           end
           block_call_stopped_at = Time.now
 
-          return @nats.publish reply, error_message(2.0, block_call_exception.message) if block_call_exception
+          if block_call_exception
+            err_msg = error_message(2.0, {
+              message: block_call_exception.message,
+              backtrace: block_call_exception.backtrace
+            })
+
+            return @nats.publish reply, err_msg
+          end
 
           value_as_json = nil
           begin
@@ -82,7 +89,7 @@ module NATS
         last_count_messages = 0
         loop do
           throughput = (last_count_messages - @count_messages).abs
-          debug "s: #{subscribe_to} q: #{opts[:queue]} - msg: #{@count_messages} tput: #{throughput}/s errs json_parse: #{@count_json_parse_errors} block_call: #{@count_block_call_errors} to_json: #{@count_to_json_errors}"
+          NATS::RPC.stats "s: #{subscribe_to} q: #{opts[:queue]} - msg: #{@count_messages} tput: #{throughput}/s errs json_parse: #{@count_json_parse_errors} block_call: #{@count_block_call_errors} to_json: #{@count_to_json_errors}"
           last_count_messages = @count_messages
           sleep 1
         end
@@ -97,11 +104,6 @@ module NATS
           payload: data.to_json,
           servant: @id
         }.to_json
-      end
-
-      def debug(str)
-        return unless ENV["NATS_RPC_DEBUG"] == "true"
-        puts str
       end
     end
   end

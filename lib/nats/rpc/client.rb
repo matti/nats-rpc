@@ -20,7 +20,10 @@ module NATS
         if data["status"] == "error"
           case data["code"]
           when 2.0
-            raise RemoteError, payload
+            rex = RemoteError.new payload["message"]
+            rex.set_backtrace payload["backtrace"]
+
+            raise rex
           else
             raise "Error code: #{data["code"]}"
           end

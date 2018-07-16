@@ -1,6 +1,7 @@
 $stdout.sync = true
 require 'nats/io/client'
 require 'json'
+require 'binding_of_caller'
 
 require_relative "rpc/version"
 require_relative "rpc/servant"
@@ -26,6 +27,33 @@ module NATS
       end
 
       opts
+    end
+
+    def self.stats(str)
+      return unless ENV["NATS_RPC_STATS"] == "true"
+      puts str
+    end
+
+    def self.debug(*args)
+      return unless ENV["NATS_RPC_DEBUG"] == "true"
+
+      calling_instance_or_class_name =  binding.of_caller(1).eval("self.class.name")
+      calling_method_name = caller_locations(1,1)[0].label
+
+      print "DEBUG #{calling_instance_or_class_name}##{calling_method_name} - "
+      inspected_arg_strings = []
+      for arg in args do
+        inspected_arg_strings << if arg.is_a? String
+          arg
+        elsif
+          arg.is_a? Array
+          "\n" + arg.inspect.split("\",").join("\n")
+        else
+         arg.inspect
+        end
+      end
+
+      puts inspected_arg_strings.join " "
     end
   end
 end

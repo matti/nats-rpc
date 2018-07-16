@@ -34,5 +34,23 @@ RSpec.describe NATS::RPC do
         client.request "test", {}, {}
       }.to raise_error NATS::RPC::RemoteError, /undefined local variable or method `asdf'/
     end
+
+    it "has remote backtrace" do
+      ENV["NATS_RPC_DEBUG"] = "true"
+
+      servant = NATS::RPC::Servant.new
+      servant.serve "test" do |params|
+        asdf
+      end
+      client = NATS::RPC::Client.new
+
+      rex = nil
+      begin
+        client.request "test", {}, {}
+      rescue NATS::RPC::RemoteError => rex
+      end
+
+      expect(rex.backtrace[3]).to include "servant.rb"
+    end
   end
 end
