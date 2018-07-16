@@ -13,8 +13,6 @@ servant_a.serve 'testing', queue: "e2e", &block
 servant_b.serve 'testing', queue: "e2e", &block
 servant_uuid.serve 'testing', queue: "e2e", &block
 
-sleep 0.5
-
 10.times do
   load "e2e/client.rb"
 end
@@ -23,4 +21,8 @@ servant_a.kill
 servant_b.kill
 servant_uuid.kill
 
+load "e2e/servant_error.rb"
+load "e2e/client_error.rb"
 
+puts ""
+puts "OK"

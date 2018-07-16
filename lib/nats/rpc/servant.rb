@@ -57,6 +57,7 @@ module NATS
 
           if block_call_exception
             err_msg = error_message(2.0, {
+              exception: block_call_exception.class.name,
               message: block_call_exception.message,
               backtrace: block_call_exception.backtrace
             })

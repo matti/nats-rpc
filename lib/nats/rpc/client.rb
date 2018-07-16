@@ -22,7 +22,7 @@ module NATS
           when 2.0
             rex = RemoteError.new payload["message"]
             rex.set_backtrace payload["backtrace"]
-
+            rex.remote_exception = payload["exception"]
             raise rex
           else
             raise "Error code: #{data["code"]}"

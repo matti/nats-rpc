@@ -49,7 +49,9 @@ RSpec.describe NATS::RPC do
         client.request "test", {}, {}
       rescue NATS::RPC::RemoteError => rex
       end
-
+      expect(rex.to_s).to start_with "NameError (undefined local variable or method `asdf'"
+      expect(rex.message).to start_with "NameError (undefined local variable or method `asdf'"
+      expect(rex.remote_exception).to eq "NameError"
       expect(rex.backtrace[3]).to include "servant.rb"
     end
   end
